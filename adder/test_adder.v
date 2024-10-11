@@ -14,31 +14,35 @@
  *
  */
 
-`include "adder.v"
+`include "adder-carry.v"
 
 module test_adder;
-	wire [15:0] answer;
+	wire [31:0] answer;
 	wire 		carry;
-	reg  [15:0] a, b;
-	reg	 [16:0] res;
+	reg  [31:0] a, b;
+	reg	 [32:0] res;
 
-	adder adder (a, b, answer, carry);
+	Add adder (a, b, answer, carry);
 	
+	reg all_passed = 1;
 	integer i;
 	initial begin
 		for(i=1; i<=100; i=i+1) begin
-			a[15:0] = $random;
-			b[15:0] = $random;
+			a[31:0] = $random;
+			b[31:0] = $random;
 			res		= a + b;
 			
 			#1;
 			$display("TESTCASE %d: %d + %d = %d carry: %d", i, a, b, answer, carry);
 
-			if (answer !== res[15:0] || carry != res[16]) begin
+			if (answer !== res[31:0] || carry != res[32]) begin
 				$display("Wrong Answer!");
+				all_passed = 0;
 			end
 		end
-		$display("Congratulations! You have passed all of the tests.");
+		if (all_passed) begin
+			$display("Congratulations! You have passed all of the tests.");
+		end
 		$finish;
 	end
 endmodule
